@@ -10,6 +10,7 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
+
 function create_popup_post_type()
 {
     register_post_type(
@@ -73,15 +74,13 @@ function display_active_popups()
         echo '<div id="popup-overlay">';
         while ($query->have_posts()) {
             $query->the_post();
+            $background_image_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
     ?>
-            <div class="popup">
+            <div class="popup" style="background-image: url('<?php echo esc_url($background_image_url); ?>');">
                 <span class="popup-close">&times;</span>
                 <h2><?php the_title(); ?></h2>
                 <div class="popup-content">
                     <?php the_content(); ?>
-                    <?php if (has_post_thumbnail()) {
-                        the_post_thumbnail();
-                    } ?>
                 </div>
             </div>
     <?php
@@ -96,7 +95,7 @@ add_action('wp_footer', 'display_active_popups');
 function custom_popup_styles()
 {
     ?>
-<style>
+    <style>
         #popup-overlay {
             display: none;
             position: fixed;
@@ -121,6 +120,9 @@ function custom_popup_styles()
             width: 80%;
             max-width: 500px;
             z-index: 10000;
+            background-size: cover;
+            background-position: center;
+            color: #fff; /* To ensure text is readable on background images */
         }
         .popup-content img {
             max-width: 100%;
