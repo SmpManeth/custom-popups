@@ -25,6 +25,7 @@
     background-size: cover;
     background-position: center;
     color: #fff;
+    border-radius: 20px;
 }
 .popup-content img {
     max-width: 100%;
