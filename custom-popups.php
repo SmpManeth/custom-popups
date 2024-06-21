@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Custom Popups for Wordpress
  * Description: A plugin to create and manage popups on the homepage.This plugin allows you to create and manage popups on the homepage of your WordPress website.
- * Version: 1.0
+ * Version: 1.0.0
  * Author: Maneth Pathirana
  * Plugin URI: https://wordroids.com/plugins/custom-popups
  * Author URI: https://github.com/SmpManeth?tab=repositories
@@ -60,3 +60,12 @@ function custom_popups_enqueue_frontend_assets() {
     wp_enqueue_script('custom-popups-js', plugins_url('assets/js/custom-popups.js', __FILE__), array('jquery'), false, true);
 }
 add_action('wp_enqueue_scripts', 'custom_popups_enqueue_frontend_assets');
+
+// Enable automatic updates for this plugin
+add_filter('auto_update_plugin', 'custom_popups_auto_update', 10, 2);
+function custom_popups_auto_update($update, $item) {
+    if (isset($item->slug) && $item->slug === 'custom-popups') {
+        return true; // Enable automatic updates
+    }
+    return $update;
+}
