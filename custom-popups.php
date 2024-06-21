@@ -40,11 +40,17 @@ function custom_popups_init() {
 }
 add_action('plugins_loaded', 'custom_popups_init');
 
+
 // Enqueue the styles and scripts for the admin
 function custom_popups_enqueue_admin_assets() {
     wp_enqueue_style('wp-color-picker');
     wp_enqueue_style('custom-popups-css', plugins_url('assets/css/custom-popups.css', __FILE__));
     wp_enqueue_script('custom-popups-js', plugins_url('assets/js/custom-popups.js', __FILE__), array('jquery', 'wp-color-picker'), false, true);
+    
+    // Add inline script to pass AJAX URL to the JavaScript file
+    $ajaxurl = admin_url('admin-ajax.php');
+    $script = 'var ajaxurl = "' . esc_url($ajaxurl) . '";';
+    wp_add_inline_script('custom-popups-js', $script, 'before');
 }
 add_action('admin_enqueue_scripts', 'custom_popups_enqueue_admin_assets');
 
@@ -54,28 +60,3 @@ function custom_popups_enqueue_frontend_assets() {
     wp_enqueue_script('custom-popups-js', plugins_url('assets/js/custom-popups.js', __FILE__), array('jquery'), false, true);
 }
 add_action('wp_enqueue_scripts', 'custom_popups_enqueue_frontend_assets');
-
-// // Register activation and deactivation hooks
-// register_activation_hook(__FILE__, array('Custom_Popups', 'activate'));
-// register_deactivation_hook(__FILE__, array('Custom_Popups', 'deactivate'));
-
-
-// // Load the plugin text domain
-// function custom_popups_load_textdomain() {
-//     load_plugin_textdomain('custom-popups', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-// }
-
-// add_action('plugins_loaded', 'custom_popups_load_textdomain');
-
-// // Add a link to the settings page from the plugins page
-// function custom_popups_add_settings_link($links) {
-//     $settings_link = '<a href="admin.php?page=custom-popups">' . __('Settings', 'custom-popups') . '</a>';
-//     array_unshift($links, $settings_link);
-//     return $links;
-// }
-
-// $plugin = plugin_basename(__FILE__);
-
-// add_filter("plugin_action_links_$plugin", 'custom_popups_add_settings_link');
-
-// Add a link to the settings page from the plugins page
