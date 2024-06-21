@@ -2,7 +2,6 @@
 
 class Custom_Popups
 {
-
     // Register hooks
     public function run()
     {
@@ -58,8 +57,7 @@ class Custom_Popups
         );
     }
 
-
-    // Render the meta box for popup details
+    // Render the meta box for banner details
     public function render_banner_content_meta_box($post)
     {
         $banner_content = get_post_meta($post->ID, '_banner_content', true);
@@ -67,7 +65,7 @@ class Custom_Popups
         $banner_text_color = get_post_meta($post->ID, '_banner_text_color', true);
         $banner_size = get_post_meta($post->ID, '_banner_size', true);
         wp_nonce_field('save_popup_meta_box', 'banner_meta_box_nonce');
-?>
+        ?>
         <label for="banner_content"><?php _e('Banner Content:', 'custom-popups'); ?></label>
         <textarea name="banner_content" id="banner_content" rows="4" style="width: 100%;"><?php echo esc_textarea($banner_content); ?></textarea><br><br>
 
@@ -83,9 +81,8 @@ class Custom_Popups
             <option value="medium" <?php selected($banner_size, 'medium'); ?>><?php _e('Medium', 'custom-popups'); ?></option>
             <option value="large" <?php selected($banner_size, 'large'); ?>><?php _e('Large', 'custom-popups'); ?></option>
         </select>
-    <?php
+        <?php
     }
-
 
     // Render the meta box for popup details
     public function render_popup_status_meta_box($post)
@@ -93,7 +90,7 @@ class Custom_Popups
         $status = get_post_meta($post->ID, '_popup_status', true);
         $popup_bg_color = get_post_meta($post->ID, '_popup_bg_color', true);
         wp_nonce_field('save_popup_meta_box', 'popup_meta_box_nonce');
-    ?>
+        ?>
         <label for="popup_status"><?php _e('Activate Popup:', 'custom-popups'); ?></label>
         <input type="checkbox" name="popup_status" id="popup_status" <?php checked($status, 'on'); ?> /><br><br>
 
@@ -105,21 +102,20 @@ class Custom_Popups
     // Save the meta box data
     public function save_popup_meta_box($post_id)
     {
-        // Check if our nonce is set and verify it
+        // Verify nonces
         if (!isset($_POST['popup_meta_box_nonce']) || !wp_verify_nonce($_POST['popup_meta_box_nonce'], 'save_popup_meta_box')) {
             return $post_id;
         }
-        // Check if our nonce is set and verify it
         if (!isset($_POST['banner_meta_box_nonce']) || !wp_verify_nonce($_POST['banner_meta_box_nonce'], 'save_popup_meta_box')) {
             return $post_id;
         }
 
-        // Check this is not an auto save routine.
+        // Check if this is an autosave
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return $post_id;
         }
 
-        // Check the user's permissions.
+        // Check user permissions
         if (isset($_POST['post_type']) && 'popup' == $_POST['post_type']) {
             if (!current_user_can('edit_page', $post_id)) {
                 return $post_id;
@@ -131,34 +127,31 @@ class Custom_Popups
         }
 
         // Update the popup status
-        if (array_key_exists('popup_status', $_POST)) {
-            update_post_meta($post_id, '_popup_status', 'on');
-        } else {
-            update_post_meta($post_id, '_popup_status', 'off');
-        }
+        $popup_status = isset($_POST['popup_status']) ? 'on' : 'off';
+        update_post_meta($post_id, '_popup_status', $popup_status);
 
         // Update the banner content
-        if (array_key_exists('banner_content', $_POST)) {
+        if (isset($_POST['banner_content'])) {
             update_post_meta($post_id, '_banner_content', sanitize_textarea_field($_POST['banner_content']));
         }
 
         // Update the banner background color
-        if (array_key_exists('banner_bg_color', $_POST)) {
+        if (isset($_POST['banner_bg_color'])) {
             update_post_meta($post_id, '_banner_bg_color', sanitize_hex_color($_POST['banner_bg_color']));
         }
 
         // Update the popup background color
-        if (array_key_exists('popup_bg_color', $_POST)) {
+        if (isset($_POST['popup_bg_color'])) {
             update_post_meta($post_id, '_popup_bg_color', sanitize_hex_color($_POST['popup_bg_color']));
         }
 
         // Update the banner text color
-        if (array_key_exists('banner_text_color', $_POST)) {
+        if (isset($_POST['banner_text_color'])) {
             update_post_meta($post_id, '_banner_text_color', sanitize_hex_color($_POST['banner_text_color']));
         }
 
         // Update the banner size
-        if (array_key_exists('banner_size', $_POST)) {
+        if (isset($_POST['banner_size'])) {
             update_post_meta($post_id, '_banner_size', sanitize_text_field($_POST['banner_size']));
         }
     }
@@ -179,14 +172,14 @@ class Custom_Popups
                 $query->the_post();
                 $background_image_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
                 $popup_bg_color = get_post_meta(get_the_ID(), '_popup_bg_color', true);
-        ?>
-                <div class="popup" style="background-image: url('<?php echo esc_url($background_image_url); ?>'); background: <?php echo $popup_bg_color ?>">
+                ?>
+                <div class="popup" style="background-image: url('<?php echo esc_url($background_image_url); ?>'); background-color: <?php echo esc_attr($popup_bg_color); ?>">
                     <span class="popup-close">&times;</span>
                     <div class="popup-content">
                         <?php the_content(); ?>
                     </div>
                 </div>
-<?php
+                <?php
             }
             echo '</div>';
         }
@@ -250,7 +243,10 @@ class Custom_Popups
     // Handle the AJAX request to toggle the popup status
     public function toggle_popup_status()
     {
-        check_ajax_referer('toggle_popup_status_' . $_POST['post_id'], 'nonce');
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'toggle_popup_status_' . $_POST['post_id'])) {
+            wp_send_json_error(array('message' => 'Invalid nonce'));
+            return;
+        }
 
         $post_id = intval($_POST['post_id']);
         $new_status = sanitize_text_field($_POST['new_status']);
@@ -258,7 +254,7 @@ class Custom_Popups
         if (update_post_meta($post_id, '_popup_status', $new_status)) {
             wp_send_json_success(array('new_status' => $new_status));
         } else {
-            wp_send_json_error();
+            wp_send_json_error(array('message' => 'Failed to update status'));
         }
     }
 }

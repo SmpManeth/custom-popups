@@ -46,8 +46,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     //reload the current wordpress page
                     location.reload();
                 } else {
-                    alert('Error toggling status');
+                    alert('Error toggling status: ' + data.data.message);
                 }
+            })
+            .catch(error => {
+                alert('Error toggling status: ' + error);
             });
         });
     });
