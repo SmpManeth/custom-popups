@@ -139,7 +139,6 @@ class Custom_Popups {
                 ?>
                 <div class="popup" style="background-image: url('<?php echo esc_url($background_image_url); ?>');">
                     <span class="popup-close">&times;</span>
-                    <h2 class="popup-title"><?php the_title(); ?></h2>
                     <div class="popup-content">
                         <?php the_content(); ?>
                     </div>
