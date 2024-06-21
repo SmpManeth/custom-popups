@@ -153,12 +153,12 @@ function custom_popup_styles()
                 });
             });
 
-            overlay.addEventListener('click', function() {
-                popups.forEach(function(popup) {
-                    popup.style.display = 'none';
-                });
-                overlay.style.display = 'none';
-            });
+            //overlay.addEventListener('click', function() {
+             //   popups.forEach(function(popup) {
+             //       popup.style.display = 'none';
+            //    });
+            //    overlay.style.display = 'none';
+           // })
         });
     </script>
 <?php
