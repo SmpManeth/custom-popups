@@ -15,3 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+jQuery(document).ready(function($){
+    $('.custom-color-picker').wpColorPicker();
+});

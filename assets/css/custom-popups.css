@@ -56,3 +56,15 @@
 {
     text-align: center;
 }
+
+#custom-banner.small {
+    font-size: 12px;
+}
+
+#custom-banner.medium {
+    font-size: 16px;
+}
+
+#custom-banner.large {
+    font-size: 20px;
+}
