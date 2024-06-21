@@ -2,6 +2,7 @@
 
 class Custom_Popups {
 
+    // Register hooks
     public function run() {
         add_action('init', array($this, 'create_popup_post_type'));
         add_action('add_meta_boxes', array($this, 'add_popup_meta_boxes'));
@@ -11,6 +12,7 @@ class Custom_Popups {
         add_action('admin_enqueue_scripts', array($this, 'enqueue_color_picker'));
     }
 
+    // Create custom post type for popups
     public function create_popup_post_type() {
         register_post_type('popup', array(
             'labels'      => array(
@@ -24,6 +26,7 @@ class Custom_Popups {
         ));
     }
 
+    // Add meta boxes for popup details
     public function add_popup_meta_boxes() {
         add_meta_box(
             'popup_status_meta_box',
@@ -35,6 +38,7 @@ class Custom_Popups {
         );
     }
 
+    // Render the meta box for popup details
     public function render_popup_status_meta_box($post) {
         $status = get_post_meta($post->ID, '_popup_status', true);
         $banner_content = get_post_meta($post->ID, '_banner_content', true);
@@ -64,6 +68,7 @@ class Custom_Popups {
         <?php
     }
 
+     // Save the meta box data
     public function save_popup_meta_box($post_id) {
         // Check if our nonce is set and verify it
         if (!isset($_POST['popup_meta_box_nonce']) || !wp_verify_nonce($_POST['popup_meta_box_nonce'], 'save_popup_meta_box')) {
@@ -114,6 +119,7 @@ class Custom_Popups {
         }
     }
 
+    // Display active popups on the footer
     public function display_active_popups() {
         $args = array(
             'post_type' => 'popup',
@@ -143,6 +149,7 @@ class Custom_Popups {
         wp_reset_postdata();
     }
 
+     // Display the banner on the head
     public function display_banner() {
         $args = array(
             'post_type' => 'popup',
@@ -168,6 +175,7 @@ class Custom_Popups {
         wp_reset_postdata();
     }
 
+     // Enqueue color picker scripts and styles
     public function enqueue_color_picker($hook_suffix) {
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_script('custom-popups-color-picker', plugins_url('assets/js/custom-popups.js', __FILE__), array('wp-color-picker'), false, true);

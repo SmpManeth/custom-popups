@@ -40,12 +40,20 @@ function custom_popups_init() {
 }
 add_action('plugins_loaded', 'custom_popups_init');
 
-//load teh css and js
-function custom_popups_enqueue_scripts() {
-    wp_enqueue_style('custom-popups', plugin_dir_url(__FILE__) . 'assets/css/custom-popups.css');
-    wp_enqueue_script('custom-popups', plugin_dir_url(__FILE__) . 'assets/js/custom-popups.js', array('jquery'), null, true);
+// Enqueue the styles and scripts for the admin
+function custom_popups_enqueue_admin_assets() {
+    wp_enqueue_style('wp-color-picker');
+    wp_enqueue_style('custom-popups-css', plugins_url('assets/css/custom-popups.css', __FILE__));
+    wp_enqueue_script('custom-popups-js', plugins_url('assets/js/custom-popups.js', __FILE__), array('jquery', 'wp-color-picker'), false, true);
 }
-add_action('wp_enqueue_scripts', 'custom_popups_enqueue_scripts');
+add_action('admin_enqueue_scripts', 'custom_popups_enqueue_admin_assets');
+
+// Enqueue the styles and scripts for the frontend
+function custom_popups_enqueue_frontend_assets() {
+    wp_enqueue_style('custom-popups-css', plugins_url('assets/css/custom-popups.css', __FILE__));
+    wp_enqueue_script('custom-popups-js', plugins_url('assets/js/custom-popups.js', __FILE__), array('jquery'), false, true);
+}
+add_action('wp_enqueue_scripts', 'custom_popups_enqueue_frontend_assets');
 
 // // Register activation and deactivation hooks
 // register_activation_hook(__FILE__, array('Custom_Popups', 'activate'));

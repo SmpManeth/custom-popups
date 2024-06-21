@@ -1,3 +1,4 @@
+// Handle popups display and close functionality
 document.addEventListener('DOMContentLoaded', function() {
     var popups = document.querySelectorAll('.popup');
     var overlay = document.getElementById('popup-overlay');
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Initialize color picker
 jQuery(document).ready(function($){
     $('.custom-color-picker').wpColorPicker();
 });
